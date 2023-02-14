@@ -124,9 +124,6 @@ async def send_start_prompt(client):
 def run_discord_bot():
     client = aclient()
 
-    with open("channels.txt", "r") as f:
-        channels = f.read().split('\n')
-
     @client.event
     async def on_ready():
         # await send_start_prompt(client)
@@ -165,6 +162,8 @@ def run_discord_bot():
 
     @client.event
     async def on_message(message):
+        with open("channels.txt", "r") as f:
+            channels = f.read().split('\n')
         if message.author.bot:
             return
         if not isinstance(message.channel, discord.channel.DMChannel):
