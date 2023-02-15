@@ -27809,6 +27809,7 @@ ngã uỵch
 ngã vật
 ngã xệp
 ngã xoài
+ngã gục
 ngạc hóa
 ngạc ngư
 ngạc nhiên
@@ -39802,6 +39803,7 @@ thiện ý
 thiêng liêng
 thiếp danh
 thiếp phục
+thiếp mời
 thiệp liệp
 thiệp thế
 thiết án
@@ -48248,6 +48250,8 @@ xỏ mũi
 xỏ ngọt
 xỏ tai
 xỏ xiên
+xỏ kim
+xỏ khuyên
 xó ró
 xó xỉnh
 xoa bóp
@@ -49455,6 +49459,7 @@ dưỡng thương
 độ ph
 đốc lý
 độc mồm
+độc lạ
 đổng binh
 đồng dục
 đổng lý
@@ -49495,6 +49500,7 @@ giao bưu
 giao cắt
 giáo lý
 giao thức
+giao hàng
 giầu mạnh
 giầu sụ
 giấy carbon
@@ -51769,6 +51775,7 @@ nội suy
 nội tháng
 nôn nức
 nơi ở
+nơi chốn
 nớt nhớt
 nũi buối
 nuôi đá
@@ -51984,6 +51991,7 @@ song vần
 số chiều
 số mười
 số tiền
+số má
 sôi lòng
 sôi sôi
 Sông Âm

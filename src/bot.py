@@ -3,12 +3,15 @@ import os
 from discord import app_commands
 from src import responses
 from src import log
+from src import noitu
 
 logger = log.setup_logger(__name__)
 
 isPrivate = False
 isReplyAll = True
 discord_channel_id = os.getenv("DISCORD_CHANNEL_ID")
+with open("channels.txt", "r") as f:
+    channels = f.read().split('\n')
 
 
 class aclient(discord.Client):
@@ -130,18 +133,19 @@ def run_discord_bot():
         await client.tree.sync()
         logger.info(f'{client.user} is now running!')
 
-    @client.tree.command(name="moichatadd", description="Thêm phòng chat tự động")
-    async def moichatadd(interaction: discord.Interaction):
+    @client.tree.command(name="chatadd", description="Thêm phòng chat tự động")
+    async def chatadd(interaction: discord.Interaction):
         channel = str(interaction.channel.id)
         f = open("channels.txt", "a")
         f.write(channel + "\n")
         f.close()
+        noitu.start()
         await interaction.response.defer(ephemeral=False)
         await interaction.followup.send("> **Đã thêm phòng này để chat tự động, MoiChat sẽ trả lời mọi tin nhắn từ phòng này!**")
         logger.info(f"Thêm phòng mới {channel}!")
 
-    @client.tree.command(name="moichatremove", description="Xóa phòng chat tự động")
-    async def moichatremove(interaction: discord.Interaction):
+    @client.tree.command(name="chatremove", description="Xóa phòng chat tự động")
+    async def chatremove(interaction: discord.Interaction):
         channel = str(interaction.channel.id)
         with open("channels.txt", "r") as f:
             lines = f.readlines()
@@ -153,32 +157,74 @@ def run_discord_bot():
         await interaction.followup.send("> **Đã xóa phòng chat tự động.**")
         logger.info(f"Xóa phòng {channel}!")
 
+    @client.tree.command(name="noituadd", description="Thêm phòng game nối từ")
+    async def noituadd(interaction: discord.Interaction):
+        channel = str(interaction.channel.id)
+        f = open("noitu_channels.txt", "a")
+        f.write(channel + "\n")
+        f.close()
+        await interaction.response.defer(ephemeral=False)
+        await interaction.followup.send("> **Đã thêm phòng này để nối từ, MoiChat sẽ trả lời mọi tin nhắn từ phòng này!**")
+        await startnoitu(interaction)
+        logger.info(f"Thêm phòng mới {channel}!")
+
+    @client.tree.command(name="noituremove", description="Xóa phòng game nối từ")
+    async def noituremove(interaction: discord.Interaction):
+        channel = str(interaction.channel.id)
+        with open("noitu_channels.txt", "r") as f:
+            lines = f.readlines()
+        with open("channels.txt", "w") as f:
+            for line in lines:
+                if line.strip("\n") != channel:
+                    f.write(line)
+        await interaction.response.defer(ephemeral=False)
+        await interaction.followup.send("> **Đã xóa phòng game nối từ.**")
+        logger.info(f"Xóa phòng {channel}!")
+
     @client.tree.command(name="help", description="Hiển thị trợ giúp của bot")
     async def help(interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=False)
-        await interaction.followup.send(":star:**BASIC COMMANDS** \n\n    - `/moichatadd` Thêm phòng chat tự động!\n    - `/moichatremove` Xóa phòng chat tự động.")
+        await interaction.followup.send(":star:**BASIC COMMANDS** \n\n    - `/chatadd` Thêm phòng chat tự động!\n    - `/chatremove` Xóa phòng chat tự động.\n    - `/noituadd` Thêm phòng game nối từ.\n    - `/noituremove` Xóa phòng game nối từ.")
         logger.info(
             "\x1b[31mSomeone need help!\x1b[0m")
 
+    @client.tree.command(name="tratu", description="Tra từ hiện tại đang nối từ")
+    async def sendtratu(interaction: discord.Interaction):
+        responses = await noitu.tratu()
+        await interaction.response.defer(ephemeral=False)
+        await interaction.response.send_message(responses)
+        # logger.info(
+        #     "\x1b[31mSomeone need help!\x1b[0m")
+
     @client.event
     async def on_message(message):
-        with open("channels.txt", "r") as f:
-            channels = f.read().split('\n')
+
         if message.author.bot:
+            return
+        if message.author == client.user:
             return
         if not isinstance(message.channel, discord.channel.DMChannel):
             if not str(message.channel.id) in channels:
                 return
-        if message.author == client.user:
-            return
         if isReplyAll:
             username = str(message.author)
             user_message = str(message.content)
             channel = str(message.channel)
             logger.info(
                 f"\x1b[31m{username}\x1b[0m : '{user_message}' ({channel})")
-            await send_message(message, user_message)
+            await sendnoitu(message, user_message)
 
     TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
     client.run(TOKEN)
+
+
+async def sendnoitu(message, user_message):
+    if not noitu.current_word:
+        await message.channel.send(noitu.start())
+    else:
+        await message.channel.send(noitu.check(user_message))
+
+
+async def startnoitu(message):
+    await message.channel.send(noitu.start())
