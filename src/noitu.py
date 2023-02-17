@@ -1,5 +1,6 @@
 import random
 import requests
+from bs4 import BeautifulSoup
 from src import log
 
 # Load danh sách các từ có 2 từ vào một list
@@ -85,27 +86,26 @@ def addHistory(word):
 
 # http://tudientv.com/dictfunctions.php?action=getmeaning&entry=chào
 
-url = "http://tudientv.com/dictfunctions.php"
-
-async def tratu() -> str:
-    global current_word
+async def tratu(word):
+    url = "http://tudientv.com/dictfunctions.php"
     payload = {
         "action": 'getmeaning',
-        "entry": current_word
+        "entry": word
     }
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept-Encoding': 'gzip, deflate, br'
     }
-
-    response = requests.request("POST", url, headers=headers, data=payload)
+    response = requests.post(url, headers=headers, data=payload)
+    response.encoding = 'UTF-8'
 
     if response.status_code == 200:
-    #     data = json.loads(response.text)
-    #     nghia = data.get("message")
-    # #   print(message)
-    #     logger.info(f"Prompt response: {message}")
-        print(response.text)
-        return response.text
+        if len(response.text) < 5:
+            return 'Không tìm thấy từ trong api tudientv, có thể từ ở nguồn khác.'
+        else:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            text = soup.get_text(separator='\n')
+            print(text)
+            return text
     else:
-        print("Không thể lấy dữ liệu từ API")
         return "Không thể lấy dữ liệu từ API"
