@@ -189,10 +189,12 @@ def run_discord_bot():
             "\x1b[31mSomeone need help!\x1b[0m")
 
     @client.tree.command(name="tratu", description="Tra từ hiện tại đang nối từ")
-    async def sendtratu(interaction: discord.Interaction):
-        responses = await noitu.tratu()
+    async def sendtratu(interaction: discord.Interaction, word: str):
+        responses = await noitu.tratu(word)
         await interaction.response.defer(ephemeral=False)
-        await interaction.response.send_message(responses)
+        embed = discord.Embed(title="Từ điển Anh - Việt", description=responses)
+        await interaction.followup.send(embed=embed)
+
         # logger.info(
         #     "\x1b[31mSomeone need help!\x1b[0m")
 
