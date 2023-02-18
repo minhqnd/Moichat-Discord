@@ -30,10 +30,9 @@ def get_word_starting_with(start):
         return word
     else:
         return False
-#TODO lỗi first word 
+
 def check(player_word):
-    global sai
-    global current_word
+    global sai, current_word
     if not current_word:
         current_word = random.choice(list_words)
     
@@ -52,28 +51,27 @@ def check(player_word):
         else:
             print('Không tồn tại từ, vui lòng tìm từ khác')
             sai -= 1
-            response = 'Không tồn tại từ, vui lòng tìm từ khác, còn ' + str(sai) + ' lần thử'
+            response = 'Không tồn tại từ, vui lòng tìm từ khác, **còn ' + str(sai) + ' lần thử** \nTừ hiện tại: **' + current_word + '**'
             return response
     else:
         return loss()
 
 def win():
-    global current_word
-    global sai
-    sai = 3
-    current_word = randomWord()
+    newgame()
     return '**BẠN ĐÃ THẮNG!** Từ mới: **' + current_word + '**'
 
 def loss():
-    global current_word
-    global sai
-    sai = 3
-    current_word = randomWord()
+    newgame()
     return '> Thua cuộc, từ đầu bạn đưa ra phải trùng với từ cuối của bot hoặc từ phải có nghĩa! \nTừ mới: **' + current_word + '**'
 
-def start():
-    global current_word
+def newgame():
+    global current_word, history, sai
+    sai = 3
     current_word = randomWord()
+    history = []
+
+def start():
+    newgame()
     return 'Từ hiện tại: **' + current_word + '**'
 
 def randomWord():
@@ -86,11 +84,12 @@ def addHistory(word):
 
 # http://tudientv.com/dictfunctions.php?action=getmeaning&entry=chào
 
-async def tratu(word):
+async def tratu():
+    global current_word
     url = "http://tudientv.com/dictfunctions.php"
     payload = {
         "action": 'getmeaning',
-        "entry": word
+        "entry": current_word
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
