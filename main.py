@@ -1,6 +1,9 @@
 from src import bot
 from dotenv import load_dotenv
 import sys
+from keep_alive import keep_alive
+
+keep_alive()
 
 def check_verion() -> None:
     import pkg_resources
