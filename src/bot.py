@@ -192,11 +192,11 @@ def run_discord_bot():
     async def sendtratu(interaction: discord.Interaction, word: str):
         responses = await noitu.tratu(word)
         await interaction.response.defer(ephemeral=False)
-        embed = discord.Embed(title="Từ điển Anh - Việt", description=responses)
+        embed = discord.Embed(title="Từ điển Tiếng Việt", description=responses)
         await interaction.followup.send(embed=embed)
 
-        # logger.info(
-        #     "\x1b[31mSomeone need help!\x1b[0m")
+        logger.info(f"Tra từ {word}!")
+
 
     @client.event
     async def on_message(message):
