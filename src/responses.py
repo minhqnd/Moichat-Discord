@@ -7,9 +7,7 @@ logger = log.setup_logger(__name__)
 def reset_chat():
     conversation_history = []
 
-
 url = "https://api.simsimi.vn/v1/simtalk"
-
 
 async def response(message) -> str:
     payload = {
